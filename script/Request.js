@@ -1,27 +1,45 @@
 
 $(document).ready(function () {
+	//Fix this need to pass it to a function like insertRow(numMsg, Name of sender and snippet)
+
+	getMessagesArr();
+	
+});
+
+function getMessagesArr() {
 	$.ajax({
 	  type: 'GET',
 	  url: '/messages'
 	})
 	.done(function (data) {
 	  const msgIdsArr = data.messages
-	  $.ajax({
-		  type: 'GET',
-		  url: '/messages/' + msgIdsArr[0].id
-		})
-		.done(function (data) {
-			const msgData = data
-			//Headers name: From, value: user.littlepig.cc
-			var payloadHeaders = msgData.payload.headers;
-			for (var i = 0; i < payloadHeaders; i++) {
-				if(payloadHeaders.name === 'From'){
-					$('#dataBody').append("<tr><td>"+ (i + 1) +"</td><td>"+ payloadHeaders.value +"</td><td>"+ msgData.snippet +"</td></tr>")
-				}
-			}
-
-
-			//Snippet
-		})
+	  for (var i = 0; i < msgIdsArr.length; i++) {
+	  	getMessageById(msgIdsArr[i].id)
+	  }
+	  
 	});
-});
+}
+
+
+/*This function return a message and 
+that message we find 'From' header and is inserted in the row of table and its snippet*/
+
+function getMessageById(id) {
+	$.ajax({
+	  type: 'GET',
+	  url: '/messages/' + id
+	})
+	.done(function (data) {
+		const msgData = data
+
+
+		//This is wrong way to do for this function it must return message data so that it can be reusable
+		//Headers name: From, value: user.littlepig.cc
+		var payloadHeaders = msgData.payload.headers;
+		for (var i = 0; i < payloadHeaders.length; i++) {
+			if(payloadHeaders[i].name === 'From'){
+				$('#dataBody').append("<tr><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
+			}
+		}
+	})
+}
