@@ -32,12 +32,21 @@ function getMessageById(id) {
 	.done(function (data) {
 		const msgData = data
 
+		//This is where we look for the unread label or messages
+		var labelsIDArr = msgData.labelIds
 
+		var isUnread = labelsIDArr.find((items) =>{
+			return items === "UNREAD"
+		})
+		
 		//This is wrong way to do for this function it must return message data so that it can be reusable
 		//Headers name: From, value: user.littlepig.cc
 		var payloadHeaders = msgData.payload.headers;
+		
+
 		for (var i = 0; i < payloadHeaders.length; i++) {
 			if(payloadHeaders[i].name === 'From'){
+				if(isUnread == "UNREAD") $('#dataBody').append("<tr><td><b>"+ payloadHeaders[i].value +"</b></td><td><b>"+ msgData.snippet +"</b></td></tr>")
 				$('#dataBody').append("<tr><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
 		}
