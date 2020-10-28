@@ -46,7 +46,7 @@ function getMessageById(id) {
 
 		for (var i = 0; i < payloadHeaders.length; i++) {
 			if(payloadHeaders[i].name === 'From'){
-				if(isUnread == "UNREAD") $('#dataBody').append("<tr><td><b>"+ payloadHeaders[i].value +"</b></td><td><b>"+ msgData.snippet +"</b></td></tr>")
+				if(isUnread == "UNREAD") $('#dataBody').append("<tr><td><i><b>"+ payloadHeaders[i].value +"</b></i></td><td><b>"+ msgData.snippet +"</b></td></tr>")
 				$('#dataBody').append("<tr><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
 		}
