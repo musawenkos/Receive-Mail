@@ -38,7 +38,9 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
   // generate a url that asks permissions for Blogger and Google Calendar scopes
   const scopes = [
     'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/userinfo.profile'
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/gmail.modify',
+    'https://www.googleapis.com/auth/gmail.labels'
   ];
 
   const url = oauth2Client.generateAuthUrl({
@@ -141,11 +143,11 @@ app.get('/removeLabel/:id',(req, res) =>{
         id: req.params.id,
         requestBody: {
           removeLabelIds:["UNREAD"]
-        }
+        },
       }, function(err, results) {
         if (err) return console.log('The API returned an error: ' + err);
-        //console.log(results)
-         res.json(results)
+        console.log(results)
+        //res.json(results)
       });
   });
 
