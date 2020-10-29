@@ -95,7 +95,7 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
           q: 'from:(@littlepig.cc)' // PLEASE CHECK IF A PERSON DOES HAVE littlepig senders or people who will send littlepig email
       }, (err, results) => {
           if (err) return console.log('The API returned an error: ' + err);
-          console.log(results)
+          //console.log(results)
           res.json(results.data)
           //res.json(msgArr[0].id)
           //Get All Messages that are from a specific sender(@littlepigcc.co.za)
@@ -125,7 +125,29 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
       });
   });
 
+app.get('/removeLabel/:id',(req, res) =>{
+  	if(req.session.tokens){
+      oauth2Client.setCredentials(req.session.tokens);  
+    }else{
+      //stored refresh token
+      //oauth2Client.setCredentials({refresh_token:});
+      res.redirect('/dashboard') // Think about on refresh token
+    }
+  	
+  	const gmail = google.gmail({version: 'v1',auth: oauth2Client});
 
+      gmail.users.messages.modify({
+        userId: 'me',
+        id: req.params.id,
+        requestBody: {
+          removeLabelIds:["UNREAD"]
+        }
+      }, function(err, results) {
+        if (err) return console.log('The API returned an error: ' + err);
+        //console.log(results)
+         res.json(results)
+      });
+  });
 
   app.get('/dashboard',(req, res) =>{
     if(req.session.tokens){

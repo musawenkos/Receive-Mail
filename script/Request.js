@@ -4,6 +4,19 @@ $(document).ready(function () {
 
 	getMessagesArr();
 	
+
+	$("#dataBody").click(function( event ) {
+		var parNodeId = event.target.parentNode.id
+		var parElem = document.getElementById(parNodeId)
+		console.log(parElem)
+		var childElem = parElem.querySelector(".boldRow")
+		console.log(childElem)
+		if(childElem != undefined){
+			//console.log("It works")
+			$("#" + parNodeId).children().removeClass("boldRow");
+			removeUnread(parElem.id)
+		}
+	})
 });
 
 function getMessagesArr() {
@@ -31,7 +44,7 @@ function getMessageById(id) {
 	})
 	.done(function (data) {
 		const msgData = data
-
+		//console.log(id)
 		//This is where we look for the unread label or messages
 		var labelsIDArr = msgData.labelIds
 
@@ -46,9 +59,21 @@ function getMessageById(id) {
 
 		for (var i = 0; i < payloadHeaders.length; i++) {
 			if(payloadHeaders[i].name === 'From'){
-				if(isUnread == "UNREAD") $('#dataBody').append("<tr><td><i><b>"+ payloadHeaders[i].value +"</b></i></td><td><b>"+ msgData.snippet +"</b></td></tr>")
-				$('#dataBody').append("<tr><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
+				if(isUnread == "UNREAD") $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
+				$('#dataBody').append("<tr id=" + id  +"><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
 		}
 	})
+}
+
+
+function removeUnread(id) {
+	$.ajax({
+	  type: 'GET',
+	  url: '/removeLabel/' + id
+	})
+	.done(function (data) {
+	  console.log(data)
+	  
+	});
 }
