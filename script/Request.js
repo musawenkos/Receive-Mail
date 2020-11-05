@@ -66,7 +66,7 @@ function getMessageById(id, isSameId) {
 		for (var i = 0; i < payloadHeaders.length; i++) {
 			
 			if(payloadHeaders[i].name === 'From'){
-				if(isUnread == "UNREAD" $$ isSameId) $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
+				if(isUnread == "UNREAD" || isSameId) $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
 				$('#dataBody').append("<tr id=" + id  +"><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
 		}
