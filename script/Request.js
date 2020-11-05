@@ -26,8 +26,14 @@ function getMessagesArr() {
 	})
 	.done(function (data) {
 	  const msgIdsArr = data.messages
+	  var prevId = msgIdArr[0].id;
 	  for (var i = 0; i < msgIdsArr.length; i++) {
-	  	getMessageById(msgIdsArr[i].id)
+		if(i > 0){
+		   if(prevId == msgIdArr[i].id){
+		   	getMessageById(msgIdsArr[i].id, true)
+		   }
+		}
+	  	prevId = msgIdArr[i].id;
 	  }
 	  
 	});
@@ -37,7 +43,7 @@ function getMessagesArr() {
 /*This function return a message and 
 that message we find 'From' header and is inserted in the row of table and its snippet*/
 
-function getMessageById(id) {
+function getMessageById(id, isSameId) {
 	$.ajax({
 	  type: 'GET',
 	  url: '/messages/' + id
@@ -58,8 +64,9 @@ function getMessageById(id) {
 		
 
 		for (var i = 0; i < payloadHeaders.length; i++) {
+			
 			if(payloadHeaders[i].name === 'From'){
-				if(isUnread == "UNREAD") $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
+				if(isUnread == "UNREAD" $$ isSameId) $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
 				$('#dataBody').append("<tr id=" + id  +"><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
 		}
