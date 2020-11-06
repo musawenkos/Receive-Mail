@@ -31,7 +31,11 @@ function getMessagesArr() {
 		if(i > 0){
 		   if(prevId == msgIdArr[i].id){
 		   	getMessageById(msgIdsArr[i].id, true)
+		   }else{
+		   	getMessageById(msgIdsArr[i].id, false)
 		   }
+		}else{
+		   getMessageById(msgIdsArr[0].id, false)
 		}
 	  	prevId = msgIdArr[i].id;
 	  }
