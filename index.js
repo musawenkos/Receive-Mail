@@ -127,7 +127,7 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
       });
   });
 
-app.get('/removeLabel/:id',(req, res) =>{
+app.post('/removeLabel/:id',(req, res) =>{
   	if(req.session.tokens){
       oauth2Client.setCredentials(req.session.tokens);  
     }else{

@@ -17,6 +17,12 @@ $(document).ready(function () {
 			removeUnread(parElem.id)
 		}
 	})
+
+	for (var row = 0; row < array.length; row++) {
+		var element = array[row];
+		
+	}
+
 });
 
 function getMessagesArr() {
@@ -26,18 +32,21 @@ function getMessagesArr() {
 	})
 	.done(function (data) {
 	  const msgIdsArr = data.messages
-	  var prevId = msgIdArr[0].id;
+	  var prevId = msgIdsArr[0].id;
 	  for (var i = 0; i < msgIdsArr.length; i++) {
-		if(i > 0){
-		   if(prevId == msgIdArr[i].id){
-		   	getMessageById(msgIdsArr[i].id, true)
-		   }else{
-		   	getMessageById(msgIdsArr[i].id, false)
-		   }
-		}else{
-		   getMessageById(msgIdsArr[0].id, false)
-		}
-	  	prevId = msgIdArr[i].id;
+			if(i > 0){
+				if(prevId == msgIdsArr[i].id){
+					var idStr = document.getElementById(msgIdsArr[i].id).id
+					console.log(idStr)
+					getMessageById(msgIdsArr[i].id, true)
+					prevId = msgIdsArr[i].id;
+				}else{
+					getMessageById(msgIdsArr[i].id, false)
+				}
+			}else{
+				getMessageById(msgIdsArr[0].id, false)
+			}
+	  	
 	  }
 	  
 	});
