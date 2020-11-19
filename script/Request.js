@@ -18,13 +18,23 @@ $(document).ready(function () {
 		}
 	})
 
-	for (var row = 0; row < array.length; row++) {
-		var element = array[row];
-		
-	}
+	
 
 });
+var removeRepeatedMsg = function () {
+	var msgRow  = document.getElementsByClassName("dtRow");
+	console.log(msgRow.length)
+	/*for(let i = 0; i < msgRow.length; i++){
+		console.log(msgRow[i]);
+		if(i != 0){
+			if(msgRow[i] === msgRow[i-1]){
+				console.log(msgRow[i]);
+			}
+		}
+	}*/
+	
 
+}
 function getMessagesArr() {
 	$.ajax({
 	  type: 'GET',
@@ -34,19 +44,7 @@ function getMessagesArr() {
 	  const msgIdsArr = data.messages
 	  var prevId = msgIdsArr[0].id;
 	  for (var i = 0; i < msgIdsArr.length; i++) {
-			if(i > 0){
-				if(prevId == msgIdsArr[i].id){
-					var idStr = document.getElementById(msgIdsArr[i].id).id
-					console.log(idStr)
-					getMessageById(msgIdsArr[i].id, true)
-					prevId = msgIdsArr[i].id;
-				}else{
-					getMessageById(msgIdsArr[i].id, false)
-				}
-			}else{
-				getMessageById(msgIdsArr[0].id, false)
-			}
-	  	
+		getMessageById(msgIdsArr[i].id);	
 	  }
 	  
 	});
@@ -56,7 +54,7 @@ function getMessagesArr() {
 /*This function return a message and 
 that message we find 'From' header and is inserted in the row of table and its snippet*/
 
-function getMessageById(id, isSameId) {
+function getMessageById(id) {
 	$.ajax({
 	  type: 'GET',
 	  url: '/messages/' + id
@@ -79,9 +77,12 @@ function getMessageById(id, isSameId) {
 		for (var i = 0; i < payloadHeaders.length; i++) {
 			
 			if(payloadHeaders[i].name === 'From'){
-				if(isUnread == "UNREAD" || isSameId) $('#dataBody').append("<tr id=" + id  +"><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
-				$('#dataBody').append("<tr id=" + id  +"><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
+				if(isUnread == "UNREAD")
+					 $('#dataBody').append("<tr id=" + id  +" class='dtRow'><td class='boldRow'>"+ payloadHeaders[i].value +"</td><td class='boldRow'>"+ msgData.snippet +"</td></tr>")
+				else
+					$('#dataBody').append("<tr id=" + id  +" class='dtRow'><td>"+ payloadHeaders[i].value +"</td><td>"+ msgData.snippet +"</td></tr>")
 			}
+			
 		}
 	})
 }
