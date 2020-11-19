@@ -14,25 +14,10 @@ $(document).ready(function () {
 			$("#" + parNodeId).children().removeClass("boldRow");
 			removeUnread(parElem.id)
 		}
-	})
-
-	
-
+	});
 });
-var removeRepeatedMsg = function () {
-	var msgRow  = document.getElementsByClassName("dtRow");
-	console.log(msgRow.length)
-	/*for(let i = 0; i < msgRow.length; i++){
-		console.log(msgRow[i]);
-		if(i != 0){
-			if(msgRow[i] === msgRow[i-1]){
-				console.log(msgRow[i]);
-			}
-		}
-	}*/
-	
 
-}
+
 function getMessagesArr() {
 	$.ajax({
 	  type: 'GET',
