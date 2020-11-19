@@ -6,13 +6,11 @@ $(document).ready(function () {
 	
 
 	$("#dataBody").click(function( event ) {
-		var parNodeId = event.target.parentNode.id
-		var parElem = document.getElementById(parNodeId)
-		console.log(parElem)
-		var childElem = parElem.querySelector(".boldRow")
-		console.log(childElem)
+		var parNodeId = event.target.parentNode.id,
+				parElem = document.getElementById(parNodeId), 
+				childElem = parElem.querySelector(".boldRow")
+		
 		if(childElem != undefined){
-			//console.log("It works")
 			$("#" + parNodeId).children().removeClass("boldRow");
 			removeUnread(parElem.id)
 		}
