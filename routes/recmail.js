@@ -1,14 +1,9 @@
-<<<<<<< Updated upstream
-//This is a file that is concerned about roles 
-=======
->>>>>>> Stashed changes
-var express = require('express')
-var router = express.Router()
+var express = require('express');
+var router = express.Router();
+
+router.get('/', function (req, res) {
+    res.send('Birds home page');
+})
 
 
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 module.exports = router

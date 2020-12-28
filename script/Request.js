@@ -1,10 +1,12 @@
 
 $(document).ready(function () {
-	//Fix this need to pass it to a function like insertRow(numMsg, Name of sender and snippet)
+	
+	getUserProfile();
 
+	//Fix this need to pass it to a function like insertRow(numMsg, Name of sender and snippet)
 	getMessagesArr();
 	
-
+	
 	$("#dataBody").click(function( event ) {
 		var parNodeId = event.target.parentNode.id,
 				parElem = document.getElementById(parNodeId), 
@@ -17,7 +19,16 @@ $(document).ready(function () {
 	});
 });
 
-
+function getUserProfile() {
+	$.ajax({
+	  type: 'GET',
+	  url: '/userprofile'
+	})
+	.done(function (data) {
+	  $('#Username').append("<img class='profile' src='" + data.picture  + "' width=300 height=300/>");
+	  $('#Username').append(" " + data.name);
+	});
+}
 function getMessagesArr() {
 	$.ajax({
 	  type: 'GET',

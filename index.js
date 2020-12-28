@@ -7,7 +7,9 @@ const {google} = require('googleapis');
 
 
 
+
 let savedTk = null;
+let typeUser = "";
 
 const app = express();
 
@@ -52,8 +54,24 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
   });
 
 
+//This should be ROLE Route(//route//roles.js)
+app.get('/admin',(req, res) =>{
+    typeUser = "admin";
+    res.sendFile(__dirname + '/views/admin.html')
+    
+});
 
-  app.get('/auth/google',(req, res) =>{
+  app.get('/intern',(req, res) =>{
+      typeUser = "intern";
+      res.sendFile(__dirname + '/views/intern.html')
+  });
+
+
+  app.get('/auth/admin',(req, res) =>{
+    res.redirect(url);
+  });
+
+  app.get('/auth/intern',(req, res) =>{
       res.redirect(url);
   });
 
@@ -65,6 +83,7 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
       //console.log(tokens)
       req.session.tokens = tokens	
       oauth2Client.setCredentials(req.session.tokens);
+
       res.redirect('/dashboard') //This must be a dashboard(views/dashboard)
   });
   oauth2Client.on('tokens', (tokens) => {
@@ -75,6 +94,20 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
       /*console.log("access_token:   " + tokens.access_token);*/
   });
 
+app.get('/userprofile',(req, res) =>{
+      var oauth2 = google.oauth2({
+        auth: oauth2Client,
+        version: 'v2'
+      });
+
+      oauth2.userinfo.v2.me.get(function(err, result) {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(result.data);
+          }
+      });
+})
 
 
   app.get('/messages',(req, res) =>{

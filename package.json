@@ -8,15 +8,15 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "googleapis": "^39.2.0",
+    "googleapis": "^66.0.0",
     "jquery": "^3.5.1",
-    "mongodb": "^3.6.2",
+    "mongodb": "^3.6.3",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.6"
   },
   "scripts": {
     "watch": "nodemon",

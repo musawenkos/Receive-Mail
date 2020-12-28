@@ -1,3 +1,7 @@
 .boldRow{
     font-weight: bold;
 }
+
+.profile{
+    border-radius:10px;
+}
