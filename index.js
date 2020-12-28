@@ -27,6 +27,9 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
 
 
   app.get('/', function (req, res) {
+    if(req.session.tokens){
+      res.redirect('/dashboard') // Think about on refresh token
+    }
     res.sendFile(__dirname + '/views/index.html') //this must be (/login)  
   })
 
@@ -54,7 +57,7 @@ MongoClient.connect(process.env.MONGODB_CONNECTION_STRING, {useUnifiedTopology: 
   });
 
 
-//This should be ROLE Route(//route//roles.js)
+//This should be ROLE Route(//routes//roles.js)
 app.get('/admin',(req, res) =>{
     typeUser = "admin";
     res.sendFile(__dirname + '/views/admin.html')
@@ -62,6 +65,9 @@ app.get('/admin',(req, res) =>{
 });
 
   app.get('/intern',(req, res) =>{
+    if(req.session.tokens){
+      res.redirect('/dashboard') // Think about on refresh token
+    }
       typeUser = "intern";
       res.sendFile(__dirname + '/views/intern.html')
   });
@@ -84,7 +90,34 @@ app.get('/admin',(req, res) =>{
       req.session.tokens = tokens	
       oauth2Client.setCredentials(req.session.tokens);
 
-      res.redirect('/dashboard') //This must be a dashboard(views/dashboard)
+      //This is incorrect to repeate this code mabye put a middleware here:
+
+      var oauth2 = google.oauth2({
+        auth: oauth2Client,
+        version: 'v2'
+      });
+
+      oauth2.userinfo.v2.me.get(function(err, result) {
+          if (err) {
+            res.json(err);
+          } else {
+            //Save the user name and type of role in the database
+            //the object that will be save will be {name:Musawenkosi Ndela, role: "intern" or "admin"}
+            var userData = result.data;
+            let dbUserSave = {name : userData.name, role:typeUser};
+            //Do not repeat the process of adding the existing user
+            dbo.collection("UserRole").find({name:userData.name}).toArray(function(err, result) {
+                if (err) throw err;
+                if(result.length == 0){
+                  dbo.collection("UserRole").insertOne(dbUserSave, function(err, res) {
+                    if(err) throw err;
+                    
+                  });
+                }
+              });
+             res.redirect('/dashboard') //This must be a dashboard(views/dashboard)
+          }
+      });
   });
   oauth2Client.on('tokens', (tokens) => {
       if (tokens.refresh_token) {
@@ -105,6 +138,8 @@ app.get('/userprofile',(req, res) =>{
             res.json(err);
           } else {
             res.json(result.data);
+
+
           }
       });
 })
