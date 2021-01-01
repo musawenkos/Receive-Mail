@@ -4,6 +4,10 @@ var MongoClient = require('mongodb').MongoClient;
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const {google} = require('googleapis');
+var base64 = require('js-base64').Base64;
+const cheerio = require('cheerio');
+var open = require('open');
+var Mailparser = require('mailparser').MailParser;
 
 
 
@@ -111,10 +115,10 @@ app.get('/admin',(req, res) =>{
                 if(result.length == 0){
                   dbo.collection("UserRole").insertOne(dbUserSave, function(err, res) {
                     if(err) throw err;
-                    
                   });
                 }
               });
+              
              res.redirect('/dashboard') //This must be a dashboard(views/dashboard)
           }
       });
@@ -195,7 +199,7 @@ app.get('/userprofile',(req, res) =>{
       });
   });
 
-app.post('/removeLabel/:id',(req, res) =>{
+app.get('/removeLabel/:id',(req, res) =>{
   	if(req.session.tokens){
       oauth2Client.setCredentials(req.session.tokens);  
     }else{
@@ -214,8 +218,8 @@ app.post('/removeLabel/:id',(req, res) =>{
         },
       }, function(err, results) {
         if (err) return console.log('The API returned an error: ' + err);
-        console.log(results)
-        //res.json(results)
+       // console.log(results)
+        res.json(results)
       });
   });
 
@@ -230,6 +234,71 @@ app.post('/removeLabel/:id',(req, res) =>{
 
 
 
+
+  app.get('/message/:id',(req, res) =>{
+        
+    //This api call will fetch the mailbody.
+    const gmail = google.gmail({version: 'v1',auth: oauth2Client});
+    gmail.users.messages.get({
+      userId: 'me',
+      id: req.params.id,
+    }, (err, result) => {
+      if(!err){
+        var body = result.data.payload.parts[1].body.data;
+        //console.log(result.data.payload)
+        var htmlBody = base64.decode(body.replace(/-/g, '+').replace(/_/g, '/'));
+        //console.log(htmlBody)
+        var fullMsg = {id:req.params.id,message:htmlBody};
+        res.json(fullMsg);
+      }
+    });
+  });
+  
+  
+/*  (node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+(node:11116) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 3)
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 4)
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 5)
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 6)
+(node:11116) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'replace' of undefined
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\index.js:249:43
+  at C:\Users\Mdu\Documents\Profile Projects\Receive-Mail\node_modules\googleapis-common\build\src\apirequest.js:50:53
+  at runMicrotasks (<anonymous>)
+  at processTicksAndRejections (internal/process/task_queues.js:97:5)
+(node:11116) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 7)
+*/
   ///Make sure that you solve this:The API returned an error: TypeError: Cannot read property 'access_token' of null
 
 

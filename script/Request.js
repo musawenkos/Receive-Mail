@@ -11,10 +11,13 @@ $(document).ready(function () {
 		var parNodeId = event.target.parentNode.id,
 				parElem = document.getElementById(parNodeId), 
 				childElem = parElem.querySelector(".boldRow")
-		
+		console.log(parNodeId);
 		if(childElem != undefined){
 			$("#" + parNodeId).children().removeClass("boldRow");
 			removeUnread(parElem.id)
+			displayMessage(parElem.id)
+		}else{
+			displayMessage(parNodeId)
 		}
 	});
 });
@@ -38,7 +41,7 @@ function getMessagesArr() {
 	  const msgIdsArr = data.messages
 	  var prevId = msgIdsArr[0].id;
 	  for (var i = 0; i < msgIdsArr.length; i++) {
-		getMessageById(msgIdsArr[i].id);	
+		listMessageById(msgIdsArr[i].id);	
 	  }
 	  
 	});
@@ -48,7 +51,7 @@ function getMessagesArr() {
 /*This function return a message and 
 that message we find 'From' header and is inserted in the row of table and its snippet*/
 
-function getMessageById(id) {
+function listMessageById(id) {
 	$.ajax({
 	  type: 'GET',
 	  url: '/messages/' + id
@@ -92,3 +95,15 @@ function removeUnread(id) {
 	  
 	});
 }
+
+function displayMessage(id){
+	$.ajax({
+		type: 'GET',
+		url: '/message/' + id
+	})
+	.done(function (data) {
+		$('#modalMessage').html(data.message)
+	})
+}
+
+
